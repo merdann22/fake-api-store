@@ -1,0 +1,26 @@
+.header {
+  background: #282c34;
+  color: white;
+
+  &__container {
+    max-width: 1440px;
+    margin:auto;
+    display: flex;
+    height: 50px;
+    align-items: center;
+    justify-content: space-between;
+
+    a {
+      padding: 0 10px;
+
+      &:hover {
+        color: burlywood;
+      }
+
+      &.active {
+        color: burlywood;
+      }
+    }
+  }
+}
+
