@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+### Live Demo version
+
+https://fake-api-store-lac.vercel.app/
+
 ## Available Scripts
 
 In the project directory, you can run:
