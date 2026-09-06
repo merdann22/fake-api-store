@@ -1,74 +1,179 @@
-# Getting Started with Create React App
+# 🛍️ Fake API Store
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Интернет-магазин, разработанный на **React** с использованием **Fake Store API**.
 
-### Live Demo version
+🔗 **Demo:** https://fake-api-store-lac.vercel.app/
 
-https://fake-api-store-lac.vercel.app/
+## 🛠 Техналогии
 
-## Available Scripts
+* React 19
+* JavaScript
+* SCSS
+* Axios
+* Fake Store API
 
-In the project directory, you can run:
+## 📦 NPM Packages
 
-### `npm start`
+Основные библиотеки, используемые в проекте:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+* `axios` — запросы к API
+* `react-router-dom` — маршрутизация
+* `react-icons` — иконки
+* `react-loading-skeleton` — Skeleton Loading
+* `react-toastify` — уведомления
+* `sass` — работа с SCSS
+* `swiper` — слайдеры
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📁 Project Structure
 
-### `npm test`
+```text
+src/
+│
+├── assets/                         # Изображения и другие ресурсы
+│
+├── components/                     # Переиспользуемые компоненты
+│   │
+│   ├── Footer/
+│   │   ├── Footer.jsx
+│   │   └── Footer.scss
+│   │
+│   ├── Header/
+│   │   ├── Header.jsx
+│   │   └── Header.scss
+│   │
+│   └── ProductCard/
+│       ├── ProductCard.jsx
+│       └── ProductCard.scss
+│
+├── context/                        # Глобальное состояние приложения
+│   └── CartContext.jsx
+│
+├── layout/                         # Общая структура страниц
+│   ├── Layout.jsx
+│   └── Layout.scss
+│
+├── pages/                          # Страницы приложения
+│   │
+│   ├── About/
+│   │   ├── About.jsx
+│   │   └── About.scss
+│   │
+│   ├── Cart/
+│   │   ├── Cart.jsx
+│   │   └── Cart.scss
+│   │
+│   ├── Catalog/
+│   │   ├── Catalog.jsx
+│   │   └── Catalog.scss
+│   │
+│   ├── Home/
+│   │   ├── Home.jsx
+│   │   └── Home.scss
+│   │
+│   ├── Product/
+│   │   ├── Product.jsx
+│   │   └── Product.scss
+│   │
+│   └── Profile/
+│       ├── Profile.jsx
+│       └── Profile.scss
+│
+├── router/                         # Настройка маршрутизации
+│   └── Router.jsx
+│
+├── services/                       # Работа с API
+│   └── api.js
+│
+├── styles/                         # Глобальные стили
+│   └── global.scss
+│
+├── App.jsx
+├── App.css
+├── index.css
+└── index.js
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🌐 API
 
-### `npm run build`
+Для получения данных о товарах и категориях используется:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Fake Store API**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+https://fakestoreapi.com/
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+API-запросы находятся в:
 
-### `npm run eject`
+```text
+src/services/api.js
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## ✨ Features
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+* Получение товаров из API
+* Получение категорий из API
+* Поиск товаров
+* Фильтрация по категориям
+* Сортировка товаров
+* Просмотр отдельного товара
+* Добавление товаров в корзину
+* Изменение количества товаров
+* Удаление товаров из корзины
+* Глобальное состояние корзины через Context API
+* Слайдеры товаров
+* Skeleton Loading
+* Toast-уведомления
+* Адаптивная верстка
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+## 🚀 Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Клонировать репозиторий:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+git clone <repository-url>
+```
 
-### Code Splitting
+Перейти в папку проекта:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+cd fake-store
+```
 
-### Analyzing the Bundle Size
+Установить зависимости:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+npm install
+```
 
-### Making a Progressive Web App
+Запустить проект:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+npm start
+```
 
-### Advanced Configuration
+После запуска приложение будет доступно локально.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## 📚 Libraries
 
-### Deployment
+Установленные основные зависимости проекта:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```text
+axios
+react-icons
+react-loading-skeleton
+react-router-dom
+react-toastify
+sass
+swiper
+```
 
-### `npm run build` fails to minify
+## 🎯 Project Purpose
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Проект создан для практики и демонстрации навыков разработки интернет-магазина на React с использованием REST API, маршрутизации, Context API, SCSS и сторонних React-библиотек.
+
+## 👨‍💻 Author
+
+**Merdan**
+
+Frontend Developer
