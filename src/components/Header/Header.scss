@@ -1,5 +1,5 @@
 .header {
-  background: #282c34;
+  background: var(--dbb);
   color: white;
 
   &__container {
@@ -11,14 +11,31 @@
     justify-content: space-between;
 
     a {
-      padding: 0 10px;
+      padding: 8px;
+
 
       &:hover {
-        color: burlywood;
+        color: var(--aa);
       }
 
       &.active {
-        color: burlywood;
+        color: var(--aa);
+        text-decoration: underline 2px;
+        text-underline-offset: 8px;
+      }
+    }
+
+    input {
+      background: var(--gbb);
+      border: none;
+      color: white;
+      width: 30%;
+      padding: 8px 10px;
+      border-radius: 30px;
+
+      &::placeholder {
+        color: white;
+        opacity: 0.5;
       }
     }
   }

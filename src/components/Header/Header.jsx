@@ -13,6 +13,7 @@ export default function Header () {
                     <NavLink to="/catolog">Каталог</NavLink>
                     <NavLink to="/about">О проекте</NavLink>
                 </nav>
+                <input type="search" placeholder="Поиск товаров..."/>
                 <div className="header__actions">
                     <NavLink to="/cart">Корзина</NavLink>
                     <NavLink to="/profile">Профиль</NavLink>
