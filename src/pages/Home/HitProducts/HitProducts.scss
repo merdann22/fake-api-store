@@ -1,0 +1,25 @@
+
+.HitProducts {
+  display: flex;
+  margin: 20px;
+  border-radius: 10px;
+  //height: 400px;
+  overflow: hidden;
+}
+
+
+.slide {
+  background: var(--dbb);
+  border-radius: 10px;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+  overflow: hidden;
+
+  //img {
+  //  width: 200px;
+  //  height: auto;
+  //  filter: drop-shadow(0 0 30px rgba(225, 225, 225, 0.2))
+  //          drop-shadow(0 0 60px rgba(0, 0, 225, 0.5));
+  //}
+}

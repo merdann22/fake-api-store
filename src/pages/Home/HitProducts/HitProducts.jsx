@@ -1,8 +1,11 @@
 import "./HitProducts.scss";
 import {useEffect, useState} from "react";
-import {getProducts}  from "../../../services/api";
+import {getProductsByCategory} from "../../../services/api";
 import {Swiper, SwiperSlide} from 'swiper/react';
+import {Autoplay, Pagination} from "swiper/modules";
 import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 export default function HitProducts  ()  {
 
@@ -10,7 +13,7 @@ export default function HitProducts  ()  {
 
     useEffect(() => {
         const loadProducts = async () => {
-            const data = await getProducts();
+            const data = await getProductsByCategory('electronics');
             setProducts(data.slice(0,5));
         };
         loadProducts();
@@ -19,17 +22,23 @@ export default function HitProducts  ()  {
     console.log(products);
 
     return (
-        <div className="HitProducts">
+        <section className="HitProducts">
             <Swiper
+                modules={[Autoplay, Pagination]}
+                pagination={{clickable: true}}
+                loop
+                autoplay={{
+                    delay: 5000,
+                }}
                 spaceBetween={20}
                 sliderPerView={4}
             >
                 {products.map((product) => (
-                    <SwiperSlide key={product.id}>
+                    <SwiperSlide className="slide" key={product.id}>
                             <img src={product.image} alt=""/>
                     </SwiperSlide>
                 ))}
             </Swiper>
-        </div>
+        </section>
     )
 }
