@@ -1,6 +1,6 @@
 import "./HitProducts.scss";
 import {useEffect, useState} from "react";
-import {getProductsByCategory} from "../../../services/api";
+import {getProducts} from "../../../services/api";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Autoplay, Pagination} from "swiper/modules";
 import 'swiper/css';
@@ -13,16 +13,22 @@ export default function HitProducts  ()  {
 
     useEffect(() => {
         const loadProducts = async () => {
-            const data = await getProductsByCategory('electronics');
-            setProducts(data.slice(0,5));
+            const data = await getProducts('products');
+            setProducts(data);
         };
         loadProducts();
     }, []);
 
+    const hits = products
+        .filter(product =>
+            product.rating.rate >=4.5)
+        .sort((a, b) => b.rating.rate-a.rating.rate);
+
+    console.log(hits, 'Hits');
     console.log(products);
 
     return (
-        <section className="HitProducts">
+        <section className="hit-products">
             <Swiper
                 modules={[Autoplay, Pagination]}
                 pagination={{clickable: true}}
@@ -33,9 +39,20 @@ export default function HitProducts  ()  {
                 spaceBetween={20}
                 sliderPerView={4}
             >
-                {products.map((product) => (
+                {hits.map((product,index) => (
                     <SwiperSlide className="slide" key={product.id}>
+                        <div className="hit-products__container">
+                            <div>
+                                <h1>
+                                    Hit products #{index+1}
+                                </h1>
+                                <h1>
+                                    Rating - {product.rating.rate}
+                                </h1>
+                            </div>
                             <img src={product.image} alt=""/>
+                        </div>
+
                     </SwiperSlide>
                 ))}
             </Swiper>
