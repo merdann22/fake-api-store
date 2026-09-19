@@ -1,5 +1,6 @@
 import "./HitProducts.scss";
 import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
 import {getProducts} from "../../../services/api";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Autoplay, Pagination} from "swiper/modules";
@@ -7,7 +8,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-export default function HitProducts  ()  {
+export default function HitProducts () {
 
     const [products, setProducts] = useState([]);
 
@@ -49,6 +50,11 @@ export default function HitProducts  ()  {
                                 <h1>
                                     Rating - {product.rating.rate}
                                 </h1>
+                                <button id={product.id}>
+                                    <Link to={`/product/${product.id}`}>
+                                        open product
+                                    </Link>
+                                </button>
                             </div>
                             <img src={product.image} alt=""/>
                         </div>
