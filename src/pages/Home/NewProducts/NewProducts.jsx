@@ -37,7 +37,7 @@ export default function NewProducts () {
                     <SwiperSlide key={product.id} className="slide" >
                         <div className="news-products__container">
                             <div className="products_title">
-                                <h1>Product #{index+1}</h1>
+                                <h1>New products #{index+1}</h1>
                                 <h2>Rating - {product.rating.rate}</h2>
                                 <button>
                                     <Link to={`/product/${product.id}`}> Open product</Link>
