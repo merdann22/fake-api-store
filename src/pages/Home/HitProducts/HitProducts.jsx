@@ -35,7 +35,7 @@ export default function HitProducts () {
                 pagination={{clickable: true}}
                 loop
                 autoplay={{
-                    delay: 5000,
+                    delay: 8000,
                 }}
                 spaceBetween={20}
                 sliderPerView={4}
@@ -43,16 +43,16 @@ export default function HitProducts () {
                 {hits.map((product,index) => (
                     <SwiperSlide className="slide" key={product.id}>
                         <div className="hit-products__container">
-                            <div>
+                            <div className="products_title">
                                 <h1>
                                     Hit products #{index+1}
                                 </h1>
-                                <h1>
+                                <h2>
                                     Rating - {product.rating.rate}
-                                </h1>
+                                </h2>
                                 <button id={product.id}>
                                     <Link to={`/product/${product.id}`}>
-                                        open product
+                                        Open product
                                     </Link>
                                 </button>
                             </div>
