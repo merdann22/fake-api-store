@@ -44,8 +44,12 @@
     margin-top: 10px;
     padding: 10px;
     border-radius: 20px;
-    background: none;
-    color: var(--sct);
-    border: solid 1px var(--sct);
+    background: var(--aa);
+    color: white;
+    border: solid 1px var(--aa);
+  }
+
+  button:hover {
+    box-shadow: 0 0 10px 10px rgba(var(--aarbg), 0.2);
   }
 }
