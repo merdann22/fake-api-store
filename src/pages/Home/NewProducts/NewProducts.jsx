@@ -18,7 +18,7 @@ export default function NewProducts () {
             setProducts(data);
         }
         loadProducts();
-    }, [])
+    })
 
     const news = products.sort((a, b) => a.id - b.id).slice(0, 6);
 
