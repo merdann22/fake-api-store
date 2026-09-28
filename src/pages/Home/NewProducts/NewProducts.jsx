@@ -13,11 +13,11 @@ export default function NewProducts () {
 
     useEffect(() => {
 
-        const loadProducts = async () => {
+        const loadNewProducts = async () => {
             const data = await getProducts(`/products/`);
             setProducts(data);
         }
-        loadProducts();
+        loadNewProducts();
     })
 
     const news = products.sort((a, b) => a.id - b.id).slice(0, 6);

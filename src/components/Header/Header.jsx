@@ -9,14 +9,14 @@ export default function Header () {
                     Merdann
                 </div>
                 <nav className="header__nav">
-                    <NavLink to="/">Главная</NavLink>
-                    <NavLink to="/catolog">Каталог</NavLink>
-                    <NavLink to="/about">О проекте</NavLink>
+                    <NavLink to={"/"}>Главная</NavLink>
+                    <NavLink to={'/products/category'}>Каталог</NavLink>
+                    <NavLink to={"/about"}>О проекте</NavLink>
                 </nav>
                 <input type="search" placeholder="Поиск товаров..."/>
                 <div className="header__actions">
-                    <NavLink to="/cart">Корзина</NavLink>
-                    <NavLink to="/profile">Профиль</NavLink>
+                    <NavLink to={"/cart"}>Корзина</NavLink>
+                    <NavLink to={"/profile"}>Профиль</NavLink>
                 </div>
             </div>
 
