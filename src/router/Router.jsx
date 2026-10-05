@@ -6,6 +6,7 @@ import Cart from "../pages/Cart/Cart";
 import Catalog from "../pages/Catalog/Catalog";
 import About from "../pages/About/About";
 import Profile from "../pages/Profile/Profile";
+import Category from "../pages/Category/Category";
 
 
 
@@ -15,9 +16,9 @@ const Router = () => {
             <Route path="/" element={<Layout/>} >
                 <Route index element={<Home />} />
                 <Route path="/products">
-                    <Route path="category" element={<Catalog/>} />
+                    <Route path="category" element={<Catalog/>}/>
                 </Route>
-
+                <Route path="/category/:name" element={<Category />} />
                 <Route path="product/:id" element={<Product/>}/>
                 <Route path="about" element={<About/>} />
                 <Route path="cart" element={<Cart/>}/>

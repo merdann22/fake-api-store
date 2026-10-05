@@ -1,0 +1,29 @@
+
+.categoriesSection {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 20px;
+  position: relative;
+
+  h1 {
+    margin-bottom: 10px;
+  }
+
+  .categories {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+    gap: 10px;
+  }
+}
+
+.categoryCard {
+  border-radius: 10px;
+  padding: 10px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  color: var(--sct);
+  background-color: var(--dbb);
+}
