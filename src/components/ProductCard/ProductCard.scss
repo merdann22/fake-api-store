@@ -1,0 +1,17 @@
+// ProductCard.scss
+@use '../../styles/abstracts' as *;
+
+.product-card {
+  padding: 16px;
+  border-radius: $radius;
+
+  &__image { width: 100%; }
+  &__title { font-size: 16px; }
+  &__btn {
+    &--active { background: $color-primary; }
+  }
+
+  @include respond(md) {
+    padding: 24px;
+  }
+}

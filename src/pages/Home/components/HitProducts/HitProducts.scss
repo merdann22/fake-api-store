@@ -11,15 +11,32 @@
     height: 300px;
     border-radius: 10px;
     overflow: hidden;
+
+    .hit-products__btn {
+      display: inline-block;
+      padding: var(--pbtn);
+      border-radius: var(--brbtn);
+      background-color: var(--dbb);
+      transition: var(--trbtn);
+      color: white;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgb(var(--aarbg));
+      }
+    }
+
+    img {
+      width: auto;
+      height: 90%;
+    }
   }
 
-  img {
-    width: auto;
-    height: 90%;
+  &__title {
     position: absolute;
+    left: 10%;
     top: 50%;
-    transform: translateY(-50%);
-    right: 10%;
+    transform: translate(-10%, -50%);
   }
 
   &__container {

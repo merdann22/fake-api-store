@@ -1,19 +1,20 @@
+// global.scss
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
 
-
-  // backgrounds (last simbol "b"- background "t"- text style
-
+:root {
   --dbb: #060C14;
-  --gbb:#1b2a3e;
-
-  // active backgrounds/text styles
-
+  --gbb: #1b2a3e;
   --aa: #3B52FB;
   --aarbg: 59, 82, 251;
   --sct: white;
+  --trbtn: background-color 0.2s ease, transform 0.2s ease;
+  --pbtn: 12px 28px;
+  --brbtn: 10px;
 }
 
 html {
@@ -24,6 +25,7 @@ body {
   font-family: Arial, sans-serif;
   background: white;
   color: black;
+
 }
 
 a {

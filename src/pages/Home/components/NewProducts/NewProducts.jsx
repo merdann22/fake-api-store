@@ -1,5 +1,5 @@
 import "./NewProducts.scss";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../../../../services/api";
 import { SwiperSlide, Swiper } from "swiper/react";
@@ -9,33 +9,42 @@ import "swiper/css/pagination";
 import "swiper/css";
 
 export default function NewProducts() {
-
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-
         const loadNewProducts = async () => {
-            const data = await getProducts();
-
-            setProducts(data.products);
+            try {
+                const data = await getProducts();
+                setProducts(data.products ?? []);
+            } catch (error) {
+                console.error("Failed to load products", error);
+            }
         };
 
         loadNewProducts();
 
     }, []);
 
-    const news = [...products]
-        .sort((a, b) => a.id - b.id)
-        .slice(0, 6);
+    const news = useMemo(
+        () =>
+            products
+                .sort((a, b) => a.id - b.id)
+                .slice(0, 6),
+    [products]
+    );
+
+    if (news.length === 0) return null;
 
     return (
         <section className="news-products">
             <Swiper
                 modules={[Autoplay, Pagination]}
                 pagination={{ clickable: true }}
-                loop
+                loop={news.length > 2}
                 autoplay={{
-                    delay: 5000,
+                    delay: 8000,
+                    pauseOnMouseEnter: true,
+                    disableOnInteraction: false,
                 }}
                 spaceBetween={20}
             >
@@ -45,19 +54,13 @@ export default function NewProducts() {
                         className="slide"
                     >
                         <div className="news-products__container">
-
-                            <div className="products_title">
-
+                            <div className="news-products__title">
                                 <h1>New products #{index + 1}</h1>
-
                                 <h2>Rating - {product.rating}</h2>
-
-                                <button>
-                                    <Link to={`/product/${product.id}`}>
-                                        Open product
-                                    </Link>
-                                </button>
-
+                                <Link to={`/product/${product.id}`}
+                                className="news-products__btn">
+                                    Open product
+                                </Link>
                             </div>
 
                             <img

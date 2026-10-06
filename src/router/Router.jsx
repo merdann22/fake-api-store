@@ -1,3 +1,5 @@
+// router/Router.jsx
+
 import Layout from "../layout/Layout";
 import {Routes, Route} from "react-router-dom";
 import Home from "../pages/Home/Home";
@@ -15,10 +17,8 @@ const Router = () => {
         <Routes>
             <Route path="/" element={<Layout/>} >
                 <Route index element={<Home />} />
-                <Route path="/products">
-                    <Route path="category" element={<Catalog/>}/>
-                </Route>
-                <Route path="/category/:name" element={<Category />} />
+                <Route path="catalog" element={<Catalog/>}/>
+                <Route path="category/:name" element={<Category />} />
                 <Route path="product/:id" element={<Product/>}/>
                 <Route path="about" element={<About/>} />
                 <Route path="cart" element={<Cart/>}/>
