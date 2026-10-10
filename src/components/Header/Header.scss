@@ -1,5 +1,5 @@
 .header {
-  background: var(--dbb);
+  background-color: var(--db-bg);
   color: white;
 
   &__container {
@@ -15,18 +15,18 @@
 
 
       &:hover {
-        color: var(--aa);
+        color: var(--text-ab);
       }
 
       &.active {
-        color: var(--aa);
+        color: var(--text-ab);
         text-decoration: underline 2px;
         text-underline-offset: 8px;
       }
     }
 
     input {
-      background: var(--gbb);
+      background: var(--gb-bg);
       border: none;
       color: white;
       width: 30%;
