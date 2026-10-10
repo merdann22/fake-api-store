@@ -76,27 +76,27 @@ export default function HitProducts() {
     if (hits.length === 0) return null;
 
     return (
-        <section className="hit-products">
+        <section className="hit-pr">
             <Swiper
                 modules={[Autoplay, Pagination]}
                 pagination={{ clickable: true }}
                 loop={hits.length > 2}
                 autoplay={{
-                    delay: 8000,
+                    delay: 5000,
                     pauseOnMouseEnter: true,
                     disableOnInteraction: false,
                 }}
                 spaceBetween={20}
             >
                 {hits.map((product, index) => (
-                    <SwiperSlide className="slide" key={product.id}>
-                        <div className="hit-products__container">
-                            <div className="hit-products__title">
+                    <SwiperSlide className="hit-pr__slide" key={product.id}>
+                        <div className="hit-pr__container">
+                            <div className="hit-pr__title">
                                 <h1>Hit products #{index + 1}</h1>
                                 <h2>Rating - {product.rating}</h2>
                                 <Link
                                     to={`/product/${product.id}`}
-                                    className="hit-products__btn"
+                                    className="hit-pr__btn"
                                 >
                                     Open product
                                 </Link>

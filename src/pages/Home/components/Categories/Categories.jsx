@@ -20,16 +20,12 @@ export default function Categories () {
     console.log(category)
 
     return (
-        <section className="categoriesSection">
+        <section className="category-wrapper">
             <h1>Категории</h1>
-            <div className="categories">
+            <div className="category-wrapper__categories">
                 {category.map((category) => (
-                    <Link to={`/category/${category.slug}`}>
-                        <button className="categoryCard" key={category.slug}>
-
+                    <Link to={`/category/${category.slug}`} className="category-wrapper__btn">
                             {category.name}
-
-                        </button>
                     </Link>
                 ))}
             </div>

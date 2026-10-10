@@ -36,29 +36,28 @@ export default function NewProducts() {
     if (news.length === 0) return null;
 
     return (
-        <section className="news-products">
+        <section className="news-pr">
             <Swiper
                 modules={[Autoplay, Pagination]}
                 pagination={{ clickable: true }}
                 loop={news.length > 2}
                 autoplay={{
-                    delay: 8000,
+                    delay: 5000,
                     pauseOnMouseEnter: true,
                     disableOnInteraction: false,
                 }}
                 spaceBetween={20}
             >
                 {news.map((product, index) => (
-                    <SwiperSlide
-                        key={product.id}
-                        className="slide"
-                    >
-                        <div className="news-products__container">
-                            <div className="news-products__title">
+                    <SwiperSlide className="news-pr__slide" key={product.id}>
+                        <div className="news-pr__container">
+                            <div className="news-pr__title">
                                 <h1>New products #{index + 1}</h1>
                                 <h2>Rating - {product.rating}</h2>
-                                <Link to={`/product/${product.id}`}
-                                className="news-products__btn">
+                                <Link
+                                    to={`/product/${product.id}`}
+                                    className="news-pr__btn"
+                                >
                                     Open product
                                 </Link>
                             </div>

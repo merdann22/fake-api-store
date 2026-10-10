@@ -1,19 +1,16 @@
-
-.news-products {
+.news-pr {
   display: flex;
   margin: 20px;
   border-radius: 10px;
   overflow: hidden;
   position: relative;
 
-  .slide {
+  &__slide {
     background: #1b2a3e;
     height: 200px;
     border-radius: 10px;
     overflow: hidden;
   }
-
-
 
   &__container {
     width: 100%;
@@ -38,15 +35,15 @@
 
   &__btn {
     display: inline-block;
-    padding: var(--pbtn);
-    border-radius: var(--brbtn);
-    transition: var(--trbtn);
+    padding: var(--p-btn);
+    border-radius: var(--br-btn);
     background-color: var(--dbb);
+    transition: var(--tr-btn);
     color: white;
     cursor: pointer;
 
     &:hover {
-      background-color: rgb(var(--aarbg));
+      background-color: rgb(var(--bg-rgb-btn));
     }
   }
 

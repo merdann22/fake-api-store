@@ -9,3 +9,5 @@ const ProductCard = ({ product }) => (
         <button className="product-card__btn product-card__btn--active">В корзину</button>
     </article>
 );
+
+export default ProductCard;
