@@ -19,17 +19,28 @@
   }
 
   &__btn {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    width: 100px;
+    height: 100px;
     padding: var(--p-btn);
+    justify-content: space-around;
+    text-align: center;
+    align-items: center;
+    color: var(--text-w);
     border-radius: var(--br-btn);
     background-color: var(--db-bg);
     transition: var(--tr-btn);
-    color: white;
     cursor: pointer;
 
     &:hover {
       background-color: rgb(var(--bg-rgb-btn));
     }
+  }
+
+  &__icon {
+    width: 70%;
+    height: auto;
   }
 }
 
