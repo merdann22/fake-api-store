@@ -5,14 +5,14 @@
   &__container {
     max-width: 1440px;
     margin:auto;
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
     height: 50px;
     align-items: center;
-    justify-content: space-between;
 
     a {
       padding: 8px;
-
+      align-items: center;
 
       &:hover {
         color: var(--text-ab);
@@ -24,20 +24,10 @@
         text-underline-offset: 8px;
       }
     }
+  }
 
-    input {
-      background: var(--gb-bg);
-      border: none;
-      color: white;
-      width: 30%;
-      padding: 8px 10px;
-      border-radius: 30px;
-
-      &::placeholder {
-        color: white;
-        opacity: 0.5;
-      }
-    }
+  &__logo, &__nav, &__actions {
+    margin: auto;
   }
 }
 

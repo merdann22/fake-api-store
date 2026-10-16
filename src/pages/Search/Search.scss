@@ -1,0 +1,38 @@
+.search {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+
+  &__input {
+
+    input {
+      background: var(--gb-bg);
+      border: none;
+      width: 100%;
+      color: white;
+      padding: 8px 10px;
+      border-radius: var(--br-btn);
+      font-size: var(--fs-lg);
+
+      &::placeholder {
+        color: white;
+        opacity: 0.5;
+      }
+    }
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+
+    .pr-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
+  }
+}
+
+
+

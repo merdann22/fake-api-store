@@ -9,6 +9,7 @@ import Catalog from "../pages/Catalog/Catalog";
 import About from "../pages/About/About";
 import Profile from "../pages/Profile/Profile";
 import Category from "../pages/Category/Category";
+import Search from "../pages/Search/Search";
 
 
 
@@ -23,6 +24,7 @@ const Router = () => {
                 <Route path="about" element={<About/>} />
                 <Route path="cart" element={<Cart/>}/>
                 <Route path="profile" element={<Profile/>}/>
+                <Route path="search" element={<Search/>}/>
             </Route>
         </Routes>
     );
