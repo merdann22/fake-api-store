@@ -6,7 +6,7 @@ import  "./Header.scss";
 
 export default function Header () {
 
-    const { isLoggedIn, logout } = useAuth();
+    const { isLoggedIn} = useAuth();
 
     return (
         <header className="header">
@@ -31,7 +31,7 @@ export default function Header () {
                         <div>
                             <NavLink to={"/login"}>Логин</NavLink>
                             <NavLink to={"/regist"}>Регистрация</NavLink>
-                            <button onClick={logout}>Выйти</button>
+
                         </div>
                     )}
                 </div>

@@ -14,12 +14,9 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import ProtectedRoute from "./ProtectedRoute";
 
-
-
 const Router = () => {
     return (
         <Routes>
-
             <Route path="/" element={<Layout/>} >
                 <Route index element={<Home />} />
                 <Route path="catalog" element={<Catalog/>}/>
