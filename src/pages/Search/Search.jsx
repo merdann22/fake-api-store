@@ -1,76 +1,101 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { searchProducts } from "../../services/api"; // функция запроса к API
-import ProductCard from "../../components/ProductCard/ProductCard"; // карточка товара
+// Search.jsx - страница поиска. Запрос хранится в URL (?q=...),
+// поэтому результаты можно открыть по ссылке и вернуться к ним кнопкой «назад»
+
 import "./Search.scss";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { searchProducts } from "../../services/api";
+import ProductCard from "../../components/ProductCard/ProductCard";
 
-function Search() {
-    // useSearchParams читает параметры из адресной строки (?q=...)
-    const [params] = useSearchParams();
-    const query = params.get("q") || ""; // поисковый запрос из URL, если его нет - пустая строка
+export default function Search() {
+    // params - объект с параметрами адресной строки, setParams - функция для их изменения
+    // (изменение URL не перезагружает страницу, но перерисовывает компонент)
+    const [params, setParams] = useSearchParams();
+    // Для /search?q=phone вернёт "phone"; если параметра нет, будет пустая строка
+    const query = params.get("q") ?? "";
 
-    // useState хранит данные, при изменении которых компонент перерисовывается
-    const [products, setProducts] = useState([]); // найденные товары
-    const [loading, setLoading] = useState(false); // идёт ли сейчас загрузка
-    const [value, setValue] = useState(query); // текст в поле ввода
+    // value - то, что пользователь печатает; query - то, что реально ищется.
+    // Они разделены, чтобы поиск не запускался на каждую набранную букву
+    const [value, setValue] = useState(query);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    // useNavigate позволяет менять адрес страницы из кода
-    const navigate = useNavigate();
+    // Синхронизация поля с URL: нужна, когда query меняется не через форму
+    // (кнопка «назад», переход по ссылке), иначе в поле останется старый текст
+    useEffect(() => {
+        setValue(query);
+    }, [query]);
 
-    // Срабатывает при отправке формы (Enter)
+    // Отправка формы (Enter): кладём запрос в URL, а сам поиск запустит эффект ниже
     const handleSubmit = (e) => {
-        e.preventDefault(); // отменяем перезагрузку страницы
-        const q = value.trim(); // убираем пробелы по краям
-        // encodeURIComponent безопасно кодирует спецсимволы для URL
-        if (q) navigate(`/search?q=${encodeURIComponent(q)}`);
+        e.preventDefault();
+        const q = value.trim(); // обрезаем пробелы по краям
+        if (q) setParams({ q }); // пустой запрос игнорируем
     };
 
-    // useEffect выполняется после рендера и при каждом изменении query (см. [query] внизу)
+    // Поиск запускается при каждом изменении query
     useEffect(() => {
-        // Если запроса нет, очищаем результаты и выходим
+        // Нет запроса - очищаем результаты и не ходим на сервер
         if (!query) {
             setProducts([]);
             return;
         }
-        setLoading(true); // показываем «Загрузка...»
-        searchProducts(query) // отправляем запрос на сервер
-            .then((data) => setProducts(data.products)) // сохраняем товары из ответа
-            .finally(() => setLoading(false)); // выключаем загрузку в любом случае
+
+        // Защита от «гонки» запросов: если пользователь успел начать новый поиск,
+        // ответ на предыдущий придёт позже и не должен перезаписать свежие результаты
+        let ignore = false;
+
+        setLoading(true);
+        searchProducts(query)
+            .then((data) => {
+                // ?? [] подстраховывает, если в ответе нет поля products
+                if (!ignore) setProducts(data.products ?? []);
+            })
+            .catch((error) => console.error("Search failed", error))
+            // finally срабатывает и при успехе, и при ошибке, чтобы загрузка не «зависла»
+            .finally(() => {
+                if (!ignore) setLoading(false);
+            });
+
+        // Функция очистки: React вызывает её перед следующим запуском эффекта
+        // или при уходе со страницы - так старый ответ помечается как устаревший
+        return () => {
+            ignore = true;
+        };
     }, [query]);
 
-    // Пока идёт загрузка, показываем только текст
-    if (loading) return <p>Загрузка...</p>;
+    // Выбор того, что показать под формой: загрузка / пусто / сетка карточек
+    let content;
+    if (loading) {
+        content = <p>Загрузка...</p>;
+    } else if (products.length === 0) {
+        content = <p>Ничего не найдено</p>;
+    } else {
+        content = (
+            <div className="pr-grid">
+                {/* key нужен React, чтобы отличать элементы списка друг от друга */}
+                {products.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
+        );
+    }
 
     return (
         <section className="search">
-            {/* Форма поиска */}
             <form className="search__input" onSubmit={handleSubmit}>
+                {/* Управляемое поле: значение хранится в состоянии value */}
                 <input
                     type="search"
                     placeholder="Поиск товаров..."
                     value={value}
-                    onChange={(e) => setValue(e.target.value)} // обновляем value при вводе
+                    onChange={(e) => setValue(e.target.value)}
                 />
             </form>
 
-            {/* Результаты показываем только если есть запрос */}
-            {query && (
-                <div className="search__container">
-                    {/* Если товаров нет - сообщение, иначе - сетка карточек */}
-                    {products.length === 0 ? (
-                        <p>Ничего не найдено</p>
-                    ) : (
-                        <div className="pr-grid">
-                            {/* map превращает каждый товар в карточку; key нужен React для списков */}
-                            {products.map((p) => (
-                                <ProductCard key={p.id} product={p} />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            )}
+            {/* Блок результатов показываем только если есть запрос,
+                иначе при первом заходе было бы «Ничего не найдено» */}
+            {query && <div className="search__container">{content}</div>}
         </section>
     );
 }
-
-export default Search;

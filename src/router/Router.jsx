@@ -10,20 +10,28 @@ import About from "../pages/About/About";
 import Profile from "../pages/Profile/Profile";
 import Category from "../pages/Category/Category";
 import Search from "../pages/Search/Search";
+import Login from "../pages/Login/Login";
+import Register from "../pages/Register/Register";
+import ProtectedRoute from "./ProtectedRoute";
 
 
 
 const Router = () => {
     return (
         <Routes>
+
             <Route path="/" element={<Layout/>} >
                 <Route index element={<Home />} />
                 <Route path="catalog" element={<Catalog/>}/>
                 <Route path="category/:name" element={<Category />} />
                 <Route path="product/:id" element={<Product/>}/>
                 <Route path="about" element={<About/>} />
-                <Route path="cart" element={<Cart/>}/>
-                <Route path="profile" element={<Profile/>}/>
+                <Route path="login" element={<Login/>}/>
+                <Route path="regist" element={<Register/>}/>
+                <Route element={<ProtectedRoute/>}>
+                    <Route path="cart" element={<Cart/>}/>
+                    <Route path="profile" element={<Profile/>}/>
+                </Route>
                 <Route path="search" element={<Search/>}/>
             </Route>
         </Routes>

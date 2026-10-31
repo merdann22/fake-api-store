@@ -1,38 +1,39 @@
-import "./NewProducts.scss";
-import {useEffect, useMemo, useState} from "react";
-import { Link } from "react-router-dom";
-import { getProducts } from "../../../../services/api";
-import { SwiperSlide, Swiper } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
+// NewProducts.jsx — слайдер с самыми новыми товарами
 
-import "swiper/css/pagination";
+import "./NewProducts.scss";
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import { getProducts } from "../../../../services/api";
+
 import "swiper/css";
+import "swiper/css/pagination";
+
+// Сколько новинок показывать в слайдере
+const NEWS_COUNT = 6;
 
 export default function NewProducts() {
     const [products, setProducts] = useState([]);
 
+    // Загружаем товары один раз при монтировании
     useEffect(() => {
-        const loadNewProducts = async () => {
-            try {
-                const data = await getProducts();
-                setProducts(data.products ?? []);
-            } catch (error) {
-                console.error("Failed to load products", error);
-            }
-        };
-
-        loadNewProducts();
-
+        getProducts()
+            .then((data) => setProducts(data.products ?? []))
+            .catch((error) => console.error("Failed to load products", error));
     }, []);
 
+    // Новинки = товары с самым большим id (добавлены последними).
+    // [...products] — копия массива, чтобы sort не менял state напрямую
     const news = useMemo(
         () =>
-            products
-                .sort((a, b) => a.id - b.id)
-                .slice(0, 6),
-    [products]
+            [...products]
+                .sort((a, b) => b.id - a.id)
+                .slice(0, NEWS_COUNT),
+        [products]
     );
 
+    // Пока нечего показывать — не рендерим секцию
     if (news.length === 0) return null;
 
     return (
@@ -52,21 +53,15 @@ export default function NewProducts() {
                     <SwiperSlide className="news-pr__slide" key={product.id}>
                         <div className="news-pr__container">
                             <div className="news-pr__title">
-                                <h1>New products #{index + 1}</h1>
-                                <h2>Rating - {product.rating}</h2>
-                                <Link
-                                    to={`/product/${product.id}`}
-                                    className="news-pr__btn"
-                                >
+                                {/* h2 вместо h1 — главный заголовок на странице должен быть один */}
+                                <h2>New products #{index + 1}</h2>
+                                <p>Rating - {product.rating}</p>
+                                <Link to={`/product/${product.id}`} className="news-pr__btn">
                                     Open product
                                 </Link>
                             </div>
 
-                            <img
-                                src={product.thumbnail}
-                                alt={product.title}
-                            />
-
+                            <img src={product.thumbnail} alt={product.title} loading="lazy" />
                         </div>
                     </SwiperSlide>
                 ))}

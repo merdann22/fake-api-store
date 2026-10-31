@@ -28,6 +28,9 @@
 
   &__logo, &__nav, &__actions {
     margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 }
 

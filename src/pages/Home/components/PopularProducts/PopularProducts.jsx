@@ -1,94 +1,102 @@
+// PopularProducts.jsx - сетка товаров с постраничной навигацией.
+// Число колонок подстраивается под ширину экрана.
+
 import "./PopularProducts.scss";
-import {useEffect, useRef, useState} from "react";
-import {getProducts} from "../../../../services/api";
+import { useEffect, useRef, useState } from "react";
+import { getProducts } from "../../../../services/api";
 import ProductCard from "../../../../components/ProductCard/ProductCard";
 
-const ROWS = 2;             // сколько строк товаров показываем
-const CARD_MIN_WIDTH = 220; // минимальная ширина карточки
-const GAP = 20;             // отступ между карточками (как в SCSS)
+const ROWS = 2;             // строк на странице
+const CARD_MIN_WIDTH = 220; // минимальная ширина карточки, px
+const GAP = 20;             // отступ между карточками, px (должен совпадать с SCSS, иначе расчёт колонок собьётся)
 
-export default function PopularProducts () {
+export default function PopularProducts() {
+    const [products, setProducts] = useState([]);
+    const [page, setPage] = useState(1);
+    // 4 - стартовое значение до первого замера ширины контейнера
+    const [columns, setColumns] = useState(4);
 
-    const [products, setProducts] = useState([]); // все товары с сервера
-    const [page, setPage] = useState(1);          // текущая страница
-    const [columns, setColumns] = useState(4);    // сколько колонок помещается
+    // Ссылка на DOM-элемент контейнера: через неё читаем его реальную ширину.
+    // useRef не вызывает перерисовку при изменении, в отличие от useState
+    const containerRef = useRef(null);
 
-    const containerRef = useRef(null); // ссылка на блок с товарами (нужна для ширины)
-
-    // загружаем товары один раз при открытии страницы
+    // Пустой массив зависимостей [] - эффект выполнится один раз, при монтировании
     useEffect(() => {
-        const loadProducts = async () => {
-            try {
-                const data = await getProducts();
-                setProducts(data.products ?? []);
-            } catch (error) {
-                console.error("Failed to load products", error);
-            }
-        }
-        loadProducts();
-    },[])
+        getProducts()
+            // ?? [] подстраховывает, если в ответе нет поля products
+            .then((data) => setProducts(data.products ?? []))
+            .catch((error) => console.error("Failed to load products", error));
+    }, []);
 
-    // считаем, сколько колонок помещается в ширину экрана
+    // Подсчёт колонок под ширину контейнера
     useEffect(() => {
         const updateColumns = () => {
-            const width = containerRef.current.offsetWidth;
+            // ?. и ?? защищают от случая, когда элемент ещё не отрисован
+            const width = containerRef.current?.offsetWidth ?? 0;
+            // Сколько карточек минимальной ширины с отступами помещается в ряд.
+            // Прибавляем GAP к ширине, потому что после последней карточки отступа нет
             const count = Math.floor((width + GAP) / (CARD_MIN_WIDTH + GAP));
-            setColumns(Math.max(1, count)); // минимум 1 колонка
+            // Колонок не может быть меньше одной
+            setColumns(Math.max(1, count));
         };
 
-        updateColumns(); // считаем сразу
-        window.addEventListener("resize", updateColumns); // и при изменении окна
-
-        // убираем слушатель, когда компонент исчезает
+        // Первый расчёт сразу, дальше - при каждом изменении размера окна
+        updateColumns();
+        window.addEventListener("resize", updateColumns);
+        // Очистка: убираем слушатель при размонтировании, чтобы не было утечки
         return () => window.removeEventListener("resize", updateColumns);
     }, []);
 
-    // если колонок стало другое число, возвращаемся на 1-ю страницу
+    // От числа колонок зависит размер страницы, поэтому при его смене
+    // текущий номер страницы теряет смысл - возвращаемся на первую
     useEffect(() => {
         setPage(1);
     }, [columns]);
 
-    // товаров на странице = колонки × строки
-    const productsPerPage = columns * ROWS;
+    // Пагинация считается прямо при рендере, отдельное состояние для неё не нужно
+    const perPage = columns * ROWS;
+    const totalPages = Math.ceil(products.length / perPage);
+    // Индекс первого товара страницы: страница 2 при perPage=8 → start=8
+    const start = (page - 1) * perPage;
+    // slice вырезает нужный кусок массива, не изменяя сам массив
+    const productsOnPage = products.slice(start, start + perPage);
 
-    const totalPages = Math.ceil(products.length / productsPerPage); // всего страниц
-    const startIndex = (page - 1) * productsPerPage;                 // с какого товара начать
-    const endIndex = startIndex + productsPerPage;                   // каким закончить
-    const productsOnPage = products.slice(startIndex, endIndex);     // товары текущей страницы
-
-    // список номеров страниц: [1, 2, 3, ...]
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pageNumbers.push(i);
-    }
+    // Создаёт массив нужной длины и заполняет его номерами: [1, 2, 3, ...]
+    // (_ - неиспользуемое значение элемента, нужен только индекс i)
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     return (
         <section className="popular-pr">
-            <h1>Популярные товары</h1>
+            <h1>Popular products</h1>
 
-            {/* сетка товаров, число колонок задаём из JS */}
+            {/* Число колонок меняется динамически, поэтому задано инлайн-стилем;
+                minmax(0, 1fr) не даёт широкому содержимому растягивать колонки */}
             <div
                 className="popular-pr__container"
                 ref={containerRef}
                 style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
             >
+                {/* key нужен React, чтобы отличать элементы списка друг от друга */}
                 {productsOnPage.map((product) => (
-                    <ProductCard product={product} key={product.id}/>
+                    <ProductCard product={product} key={product.id} />
                 ))}
             </div>
 
-            {/* кнопки с номерами страниц */}
-            <div className="pagination">
-                {pageNumbers.map((number) => (
-                    <button
-                        key={number}
-                        className={number === page ? "active" : ""}
-                        onClick={() => setPage(number)}
-                    >
-                        {number}
-                    </button>
-                ))}
-            </div>
+            {/* Если страница одна, кнопки не нужны */}
+            {totalPages > 1 && (
+                <div className="pagination">
+                    {pageNumbers.map((number) => (
+                        <button
+                            key={number}
+                            // Подсвечиваем кнопку текущей страницы
+                            className={number === page ? "active" : ""}
+                            onClick={() => setPage(number)}
+                        >
+                            {number}
+                        </button>
+                    ))}
+                </div>
+            )}
         </section>
-    )
+    );
 }

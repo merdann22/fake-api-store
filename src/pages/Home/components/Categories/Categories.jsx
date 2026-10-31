@@ -1,9 +1,12 @@
-import "./Categories.scss";
-import {useEffect, useState} from "react";
-import {getCategories} from "../../../../services/api";
+// Categories.jsx — список категорий с иконками, каждая ведёт на свою страницу
 
-// Иконки из библиотеки react-icons.
-// Буквы в пути показывают набор: fa = Font Awesome, md = Material, gi = Game Icons, bs = Bootstrap
+import "./Categories.scss";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { getCategories } from "../../../../services/api";
+
+// Иконки из react-icons. Префикс = набор: Fa — Font Awesome, Md — Material,
+// Gi — Game Icons, Bs — Bootstrap
 import {
     FaLaptop, FaMotorcycle, FaCar, FaTabletAlt, FaMobileAlt,
     FaHeadphones, FaShoppingBasket, FaHome, FaSpa,
@@ -16,10 +19,9 @@ import {
     GiHandBag, GiDress, GiDiamondRing, GiHighHeel,
 } from "react-icons/gi";
 import { BsWatch } from "react-icons/bs";
-import {Link} from "react-router-dom";
 
-// Словарь: ключ это slug категории из API, значение это иконка для неё
-const categoryIcons = {
+// slug категории из API → её иконка
+const CATEGORY_ICONS = {
     "beauty": FaSpa,
     "fragrances": GiPerfumeBottle,
     "furniture": MdChair,
@@ -46,36 +48,30 @@ const categoryIcons = {
     "womens-watches": BsWatch,
 };
 
-export default function Categories () {
+export default function Categories() {
+    const [categories, setCategories] = useState([]);
 
-    // Здесь хранится список категорий. Сначала он пустой, потом заполняется данными с сервера
-    const [category, setCategory] = useState([]);
-
-    // Этот код выполняется один раз, когда компонент появился на странице
+    // Загружаем категории один раз при монтировании
     useEffect(() => {
-        const loadCategories = async () => {
-            // Запрашиваем категории из API
-            const data = await getCategories('/categories/');
-            // Сохраняем их в состояние, после этого компонент перерисуется
-            setCategory(data);
-        }
-        loadCategories();
-
-    }, []) // пустой массив [] означает "запустить только один раз"
+        getCategories()
+            .then((data) => setCategories(data ?? []))
+            .catch((error) => console.error("Failed to load categories", error));
+    }, []);
 
     return (
         <section className="category-wrapper">
             <h1>Категории</h1>
+
             <div className="category-wrapper__categories">
-                {/* Для каждой категории создаём ссылку-кнопку */}
-                {category.map((item) => {
-                    // Берём иконку по slug. Если для него иконки нет, ставим запасную MdCategory.
-                    // Имя пишем с большой буквы, иначе React не поймёт, что это компонент
-                    const Icon = categoryIcons[item.slug] || MdCategory;
+                {categories.map((item) => {
+                    // Иконка по slug; если её нет в словаре — запасная.
+                    // Имя с большой буквы, чтобы React воспринял её как компонент
+                    const Icon = CATEGORY_ICONS[item.slug] ?? MdCategory;
+
                     return (
                         <Link
-                            key={item.slug} // key нужен React, чтобы различать элементы списка
-                            to={`/category/${item.slug}`} // ссылка на страницу категории
+                            key={item.slug}
+                            to={`/category/${item.slug}`}
                             className="category-wrapper__btn"
                         >
                             <Icon className="category-wrapper__icon" />
@@ -84,7 +80,6 @@ export default function Categories () {
                     );
                 })}
             </div>
-
         </section>
-    )
+    );
 }

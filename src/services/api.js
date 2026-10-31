@@ -1,196 +1,131 @@
-// api.js
-// В этом файле лежат все функции для общения с сервером (API).
-// Остальные части приложения (страницы, компоненты) просто импортируют
-// отсюда нужную функцию и вызывают её.
+// api.js - все запросы к серверу (DummyJSON) собраны в одном месте.
+//
+// Общее для всех функций ниже:
+// - они асинхронные, поэтому вызывать их нужно с await (или через .then);
+// - axios кладёт тело ответа в поле data, поэтому мы достаём его через
+//   деструктуризацию { data } и возвращаем наружу только его;
+// - при ошибке (сеть, 4xx, 5xx) axios выбрасывает исключение, его ловите
+//   в месте вызова через try/catch.
 
 import axios from 'axios';
 
-// Адрес сервера. Если он изменится, поправить нужно только здесь.
 const API_URL = 'https://dummyjson.com';
 
-// Создаём "настроенный" axios.
-// Теперь вместо полного адреса можно писать просто '/products'.
+// Свой экземпляр axios с общими настройками:
+// baseURL добавляется ко всем путям, timeout обрывает запрос, если сервер молчит 10 сек
 const api = axios.create({
     baseURL: API_URL,
-    timeout: 10000, // если сервер молчит 10 секунд, запрос завершится ошибкой
+    timeout: 10000,
 });
 
+// По умолчанию DummyJSON отдаёт только 30 записей; limit: 0 снимает это ограничение
+const ALL = { limit: 0 };
 
-// =====================================================
-// ТОВАРЫ (products)
-// =====================================================
 
-// Получить все товары.
-// limit=0 означает "без ограничения", то есть вернуть все товары сразу.
+// ---------- Товары ----------
+
+// Ответ: { products: [...], total, skip, limit }
 export const getProducts = async () => {
-    const response = await api.get('/products', {
-        params: { limit: 0 },
-    });
-
-    return response.data;
+    const { data } = await api.get('/products', { params: ALL });
+    return data;
 };
 
-// Получить один товар по его id.
+// Один товар по id, ответ: объект товара
 export const getProduct = async (id) => {
-    const response = await api.get(`/products/${id}`);
-
-    return response.data;
+    const { data } = await api.get(`/products/${id}`);
+    return data;
 };
 
-// Поиск товаров по слову, например searchProducts('phone').
-// Через params axios сам правильно подставит слово в адрес
-// (пробелы, русские буквы и спецсимволы тоже будут работать).
+// Поиск по слову (q), ответ в том же формате, что и у getProducts
 export const searchProducts = async (query) => {
-    const response = await api.get('/products/search', {
-        params: { q: query },
-    });
-
-    return response.data;
+    const { data } = await api.get('/products/search', { params: { q: query } });
+    return data;
 };
 
-// Получить список категорий (массив объектов: slug, name, url).
+// Категории как объекты: [{ slug, name, url }]. Подходит для отображения названий
 export const getCategories = async () => {
-    const response = await api.get('/products/categories');
-
-    return response.data;
+    const { data } = await api.get('/products/categories');
+    return data;
 };
 
-// Получить список категорий в виде простых строк: ['beauty', 'laptops', ...].
+// Категории как массив slug-строк: ['beauty', 'laptops', ...]. Подходит для ссылок и фильтров
 export const getCategoryList = async () => {
-    const response = await api.get('/products/category-list');
-
-    return response.data;
+    const { data } = await api.get('/products/category-list');
+    return data;
 };
 
-// Получить все товары одной категории, например getProductsByCategory('laptops').
+// Товары одной категории; category это slug (например, 'laptops')
 export const getProductsByCategory = async (category) => {
-    const response = await api.get(`/products/category/${category}`, {
-        params: { limit: 0 },
-    });
-
-    return response.data;
+    const { data } = await api.get(`/products/category/${category}`, { params: ALL });
+    return data;
 };
 
 
-// =====================================================
-// ПОЛЬЗОВАТЕЛИ (users)
-// =====================================================
+// ---------- Пользователи ----------
 
-// Получить всех пользователей.
-export const getUsers = async () => {
-    const response = await api.get('/users', {
-        params: { limit: 0 },
-    });
-
-    return response.data;
+// Постраничная загрузка: limit - размер страницы, skip - сколько записей пропустить.
+// Формула для страницы N: skip = (N - 1) * limit (страница 3 по 12 → skip: 24).
+// Без аргументов вернёт первые 12.
+export const getUsers = async ({ limit = 12, skip = 0 } = {}) => {
+    const { data } = await api.get('/users', { params: { limit, skip } });
+    return data; // { users: [...], total: 208, skip, limit }; total нужен для расчёта числа страниц
 };
 
-// Получить одного пользователя по id.
+// Один пользователь по id
 export const getUser = async (id) => {
-    const response = await api.get(`/users/${id}`);
-
-    return response.data;
+    const { data } = await api.get(`/users/${id}`);
+    return data;
 };
 
-// Поиск пользователей по слову (например, по имени).
+// Поиск по имени, email, городу и т.д.; формат ответа как у getUsers
 export const searchUsers = async (query) => {
-    const response = await api.get('/users/search', {
-        params: { q: query },
-    });
-
-    return response.data;
+    const { data } = await api.get('/users/search', { params: { q: query } });
+    return data;
 };
 
 
-// =====================================================
-// КОРЗИНЫ (carts)
-// =====================================================
+// ---------- Корзины ----------
 
-// Получить все корзины.
 export const getCarts = async () => {
-    const response = await api.get('/carts', {
-        params: { limit: 0 },
-    });
-
-    return response.data;
+    const { data } = await api.get('/carts', { params: ALL });
+    return data;
 };
 
-// Получить одну корзину по id.
 export const getCart = async (id) => {
-    const response = await api.get(`/carts/${id}`);
-
-    return response.data;
+    const { data } = await api.get(`/carts/${id}`);
+    return data;
 };
 
-// Получить корзины конкретного пользователя.
+// Корзины конкретного пользователя (по id из getUser / данных логина)
 export const getCartsByUser = async (userId) => {
-    const response = await api.get(`/carts/user/${userId}`);
-
-    return response.data;
+    const { data } = await api.get(`/carts/user/${userId}`);
+    return data;
 };
 
 
-// =====================================================
-// АВТОРИЗАЦИЯ (auth)
-// =====================================================
+// ---------- Авторизация ----------
 
-// Войти в аккаунт.
-// Сервер вернёт данные пользователя и токены (accessToken, refreshToken).
-// Токен нужно сохранить, например: localStorage.setItem('token', data.accessToken)
+// Вход по логину и паролю. Ответ: данные пользователя + accessToken и refreshToken.
+// accessToken живёт недолго и нужен для защищённых запросов, refreshToken - для его обновления.
+// Для тестов подойдёт пара emilys / emilyspass.
+// Имя совпадает с login из AuthContext, поэтому при импорте переименуйте:
+// import { login as loginRequest } from './services/api'
 export const login = async (username, password) => {
-    const response = await api.post('/auth/login', {
-        username,
-        password,
-    });
-
-    return response.data;
+    const { data } = await api.post('/auth/login', { username, password });
+    return data;
 };
 
-// Получить данные текущего пользователя.
-// Для этого серверу нужно показать токен, который мы получили при входе.
+// Данные того, кто вошёл. Сервер определяет пользователя по токену,
+// который передаётся в заголовке Authorization в формате "Bearer <токен>"
 export const getCurrentUser = async (token) => {
-    const response = await api.get('/auth/me', {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+    const { data } = await api.get('/auth/me', {
+        headers: { Authorization: `Bearer ${token}` },
     });
-
-    return response.data;
+    return data;
 };
 
-// Обновить токен, когда старый перестал работать.
+// Обмен refreshToken на новый accessToken, когда срок жизни старого истёк
 export const refreshAccessToken = async (refreshToken) => {
-    const response = await api.post('/auth/refresh', {
-        refreshToken,
-    });
-
-    return response.data;
+    const { data } = await api.post('/auth/refresh', { refreshToken });
+    return data;
 };
-
-
-// =====================================================
-// КАК ИСПОЛЬЗОВАТЬ В КОМПОНЕНТЕ (пример)
-// =====================================================
-//
-// import { useEffect, useState } from 'react';
-// import { getProducts } from './api';
-//
-// function Catalog() {
-//     const [products, setProducts] = useState([]);
-//     const [error, setError] = useState('');
-//
-//     useEffect(() => {
-//         const loadProducts = async () => {
-//             try {
-//                 const data = await getProducts();
-//                 setProducts(data.products); // сами товары лежат в data.products
-//             } catch (err) {
-//                 setError('Не удалось загрузить товары');
-//             }
-//         };
-//
-//         loadProducts();
-//     }, []);
-//
-//     ...
-// }

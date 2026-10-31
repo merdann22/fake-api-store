@@ -1,76 +1,80 @@
+// HitProducts.jsx - слайдер с товарами, у которых самый высокий рейтинг
+
 import "./HitProducts.scss";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getProducts } from "../../../../services/api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
+import { getProducts } from "../../../../services/api";
 
+// Стили Swiper подключаются отдельно: базовые и для точек пагинации
 import "swiper/css";
 import "swiper/css/pagination";
 
+// Сколько товаров показывать и с какого рейтинга считать товар хитом
+const HITS_COUNT = 6;
+const MIN_RATING = 4.5;
+
 export default function HitProducts() {
-    const [products, setProducts] = useState([]); // все товары с сервера
+    const [products, setProducts] = useState([]);
 
-    // загружаем товары один раз при открытии страницы
+    // Пустой массив зависимостей [] - эффект выполнится один раз, при монтировании
     useEffect(() => {
-        const loadProducts = async () => {
-            try {
-                const data = await getProducts();
-                setProducts(data.products ?? []); // если данных нет, ставим пустой массив
-            } catch (error) {
-                console.error("Failed to load products", error);
-            }
-        };
-
-        loadProducts();
+        getProducts()
+            // ?? [] подстраховывает, если в ответе нет поля products
+            .then((data) => setProducts(data.products ?? []))
+            .catch((error) => console.error("Failed to load products", error));
     }, []);
 
-    // выбираем лучшие товары (useMemo пересчитывает только при изменении products)
+    // useMemo запоминает результат и пересчитывает его только при изменении products,
+    // а не при каждой перерисовке компонента.
+    // Порядок важен: сначала отсеиваем по рейтингу, затем сортируем, затем обрезаем.
+    // Сортировка безопасна для исходного массива, потому что filter уже создал его копию
     const hits = useMemo(
         () =>
             products
-                .filter(p => p.rating >= 4.5)       // только с рейтингом 4.5 и выше
-                .sort((a, b) => b.rating - a.rating) // сначала самые высокие
-                .slice(0, 6),                        // берём первые 6
+                .filter((p) => p.rating >= MIN_RATING)
+                .sort((a, b) => b.rating - a.rating) // b - a: от большего рейтинга к меньшему
+                .slice(0, HITS_COUNT),
         [products]
     );
 
-    // если хитов нет (грузятся или их просто нет), ничего не показываем
+    // Возврат null значит "ничего не отрисовывать": пока товары грузятся
+    // (или хитов нет), секция не занимает место на странице
     if (hits.length === 0) return null;
 
     return (
         <section className="hit-pr">
-            {/* слайдер: сам листает слайды каждые 5 секунд */}
             <Swiper
+                // Swiper подключает только указанные модули, чтобы не тянуть лишний код
                 modules={[Autoplay, Pagination]}
-                pagination={{ clickable: true }} // точки внизу, на них можно нажимать
-                loop={hits.length > 2}           // зацикливаем, если слайдов больше двух
+                // clickable: по точкам можно переключать слайды
+                pagination={{ clickable: true }}
+                // Зацикливание включаем только при достаточном числе слайдов,
+                // иначе loop в Swiper работает некорректно
+                loop={hits.length > 2}
                 autoplay={{
-                    delay: 5000,                  // пауза между слайдами (мс)
-                    pauseOnMouseEnter: true,      // при наведении мыши листание стоит
-                    disableOnInteraction: false,  // после клика автолистание не отключается
+                    delay: 5000, // пауза между слайдами, мс
+                    pauseOnMouseEnter: true, // при наведении мыши автопрокрутка останавливается
+                    disableOnInteraction: false, // после ручного переключения автопрокрутка продолжается
                 }}
-                spaceBetween={20} // расстояние между слайдами
+                spaceBetween={20} // отступ между слайдами, px
             >
-                {/* по одному слайду на каждый товар */}
+                {/* index используем только для номера в заголовке, а key берём из id товара */}
                 {hits.map((product, index) => (
                     <SwiperSlide className="hit-pr__slide" key={product.id}>
                         <div className="hit-pr__container">
                             <div className="hit-pr__title">
-                                <h1>Hit products #{index + 1}</h1>
-                                <h2>Rating - {product.rating}</h2>
-                                <Link
-                                    to={`/product/${product.id}`}
-                                    className="hit-pr__btn"
-                                >
+                                {/* h2 вместо h1: главный заголовок на странице должен быть один */}
+                                <h2>Hit products #{index + 1}</h2>
+                                <p>Rating - {product.rating}</p>
+                                <Link to={`/product/${product.id}`} className="hit-pr__btn">
                                     Open product
                                 </Link>
                             </div>
 
-                            <img
-                                src={product.thumbnail}
-                                alt={product.title}
-                            />
+                            {/* loading="lazy": браузер грузит картинку, только когда она近 к области видимости */}
+                            <img src={product.thumbnail} alt={product.title} loading="lazy" />
                         </div>
                     </SwiperSlide>
                 ))}
